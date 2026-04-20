@@ -354,9 +354,9 @@ curl "http://localhost:8080/path_traversal/vul?filepath=../../../etc/passwd"
 
 ## 👨‍💻 Author
 
-**[Majd Masri]**
+**[Taha El Cheikh]**
 - CodeAlpha Cybersecurity Intern
-- GitHub: [@majd-el-masri](https://github.com/majd-el-masri)
+- GitHub: [@majd-el-masri]((https://github.com/tahacheikh2003))
 
 
 ---
