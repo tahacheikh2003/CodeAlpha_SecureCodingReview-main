@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html class="dark" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title>Secure Code Review Lab | Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "primary-fixed-dim": "#00e479",
+        "outline": "#849585",
+        "on-tertiary-fixed": "#400011",
+        "tertiary-fixed-dim": "#ffb2ba",
+        "on-error-container": "#ffdad6",
+        "on-secondary-fixed-variant": "#00497e",
+        "on-surface-variant": "#b9cbb9",
+        "surface-tint": "#00e479",
+        "on-secondary": "#003259",
+        "inverse-primary": "#006d37",
+        "secondary-fixed-dim": "#9fcaff",
+        "surface-container": "#1c2027",
+        "background": "#10131b",
+        "on-error": "#690005",
+        "surface-container-highest": "#31353d",
+        "surface-container-low": "#181c23",
+        "surface-container-high": "#272a32",
+        "outline-variant": "#3b4b3d",
+        "on-background": "#e0e2ed",
+        "on-secondary-fixed": "#001d36",
+        "on-primary-fixed-variant": "#005228",
+        "on-surface": "#e0e2ed",
+        "surface": "#10131b",
+        "surface-bright": "#363941",
+        "secondary-container": "#0e9aff",
+        "surface-dim": "#10131b",
+        "surface-variant": "#31353d",
+        "on-tertiary": "#670020",
+        "inverse-surface": "#e0e2ed",
+        "tertiary-fixed": "#ffd9dc",
+        "on-tertiary-container": "#c40044",
+        "primary-fixed": "#60ff99",
+        "on-primary-fixed": "#00210c",
+        "on-primary-container": "#007139",
+        "surface-container-lowest": "#0b0e15",
+        "tertiary": "#fffaf9",
+        "on-tertiary-fixed-variant": "#910030",
+        "on-primary": "#003919",
+        "inverse-on-surface": "#2d3038",
+        "error-container": "#93000a",
+        "secondary-fixed": "#d2e4ff",
+        "tertiary-container": "#ffd4d7",
+        "secondary": "#9fcaff",
+        "primary": "#f1ffef",
+        "on-secondary-container": "#003055",
+        "primary-container": "#00ff88",
+        "error": "#ffb4ab"
+      },
+      borderRadius: {
+        DEFAULT: "0px",
+        lg: "0px",
+        xl: "0px",
+        full: "9999px"
+      },
+      fontFamily: {
+        headline: ["Space Grotesk", "monospace"],
+        body: ["Space Grotesk", "monospace"],
+        label: ["Space Grotesk", "monospace"]
+      }
+    }
+  }
+}
+</script>
+<style>
+body {
+  background-color: #060910;
+  color: #e0e2ed;
+  font-family: 'Space Grotesk', monospace;
+}
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.pulse-monitor {
+  box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 255, 136, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+}
+.blinking-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 18px;
+  background-color: #00ff88;
+  animation: blink 1s step-end infinite;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+@keyframes blink {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
+}
+</style>
+</head>
+<body class="min-h-screen pb-20">
+<nav class="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b-0 bg-[#10131b] px-6 py-3 font-['Space_Grotesk'] uppercase tracking-tight text-[#00ff88]">
+  <div class="flex items-center gap-2">
+    <span class="text-xl font-bold tracking-tighter text-[#f1ffef]">Secure</span>
+    <span class="text-xl font-bold tracking-tighter text-[#00ff88] drop-shadow-[0_0_8px_rgba(0,255,136,0.4)]">Audit</span>
+  </div>
+  <div class="flex items-center gap-6">
+    <div class="flex items-center gap-3 border border-outline-variant/20 bg-surface-container-low px-4 py-1.5">
+      <span class="text-xs text-on-surface-variant" th:text="${user} + '@secureaudit'">admin@secureaudit</span>
+      <div class="pulse-monitor h-2.5 w-2.5 rounded-full bg-primary-container"></div>
+    </div>
+    <a th:href="@{/logout}" class="bg-[#c40044] px-4 py-1.5 text-xs font-bold text-white transition-all hover:bg-[#910030] active:opacity-80">LOGOUT</a>
+  </div>
+</nav>
+
+<main class="mx-auto max-w-[1440px] space-y-12 px-6 py-10">
+  <section class="space-y-4">
+    <div class="flex items-center gap-2 font-mono text-sm text-primary-container">
+      <span>// CodeAlpha Secure Coding Review</span>
+      <div class="h-px flex-1 bg-gradient-to-r from-primary-container/20 to-transparent"></div>
+    </div>
+    <h1 class="text-6xl font-bold uppercase tracking-tighter text-on-surface">
+      Secure <span class="bg-gradient-to-r from-primary-container to-primary-fixed-dim bg-clip-text text-transparent">Code Review Dashboard</span>
+    </h1>
+    <p class="max-w-2xl font-mono leading-relaxed text-on-surface-variant">
+      A hands-on review interface for demonstrating common web vulnerabilities, unsafe coding patterns, and upload validation issues inside a controlled Spring Boot lab.
+    </p>
+  </section>
+
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+    <div class="border-t-4 border-[#ff3366] bg-surface-container-low p-6 transition-all hover:bg-surface-container-high">
+      <div class="mb-4 flex items-start justify-between">
+        <span class="font-mono text-xs uppercase tracking-widest text-on-surface-variant">Critical Paths</span>
+        <span class="material-symbols-outlined text-[#ff3366]">report</span>
+      </div>
+      <div class="text-5xl font-bold text-on-surface">5</div>
+    </div>
+
+    <div class="border-t-4 border-yellow-500 bg-surface-container-low p-6 transition-all hover:bg-surface-container-high">
+      <div class="mb-4 flex items-start justify-between">
+        <span class="font-mono text-xs uppercase tracking-widest text-on-surface-variant">High Risk</span>
+        <span class="material-symbols-outlined text-yellow-500">warning</span>
+      </div>
+      <div class="text-5xl font-bold text-on-surface">5</div>
+    </div>
+
+    <div class="border-t-4 border-[#0099ff] bg-surface-container-low p-6 transition-all hover:bg-surface-container-high">
+      <div class="mb-4 flex items-start justify-between">
+        <span class="font-mono text-xs uppercase tracking-widest text-on-surface-variant">Review Modules</span>
+        <span class="material-symbols-outlined text-[#0099ff]">view_module</span>
+      </div>
+      <div class="text-5xl font-bold text-on-surface">15</div>
+    </div>
+
+    <div class="border-t-4 border-[#00ff88] bg-surface-container-low p-6 transition-all hover:bg-surface-container-high">
+      <div class="mb-4 flex items-start justify-between">
+        <span class="font-mono text-xs uppercase tracking-widest text-on-surface-variant">Lab Status</span>
+        <span class="material-symbols-outlined text-[#00ff88]">check_circle</span>
+      </div>
+      <div class="text-5xl font-bold text-on-surface">Ready</div>
+    </div>
+  </div>
+
+  <a th:href="@{/appInfo}" class="group flex w-full cursor-pointer items-center justify-between border border-secondary-container/30 bg-surface-container-low p-6 transition-all hover:bg-secondary-container/5">
+    <div class="flex items-center gap-6">
+      <div class="flex h-12 w-12 items-center justify-center border border-secondary-container/20 bg-secondary-container/10">
+        <span class="material-symbols-outlined text-secondary-container">info</span>
+      </div>
+      <div>
+        <h3 class="text-xl font-bold uppercase tracking-tight text-on-surface">Application Runtime Info</h3>
+        <p class="font-mono text-xs tracking-wider text-on-surface-variant">// Version, user, server, and Java details</p>
+      </div>
+    </div>
+    <span class="material-symbols-outlined text-4xl text-secondary-container transition-transform group-hover:translate-x-2">chevron_right</span>
+  </a>
+
+  <section class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <div class="border border-outline-variant/20 bg-surface-container-low p-6">
+      <p class="mb-2 font-mono text-[10px] uppercase tracking-[0.24em] text-primary-container">Review Focus</p>
+      <h3 class="mb-2 text-xl font-bold text-on-surface">Unsafe Coding Patterns</h3>
+      <p class="text-sm leading-6 text-on-surface-variant">Browse examples for SQL injection, command execution, path traversal, SSRF, and token misuse.</p>
+    </div>
+    <div class="border border-outline-variant/20 bg-surface-container-low p-6">
+      <p class="mb-2 font-mono text-[10px] uppercase tracking-[0.24em] text-secondary-container">Hands-on Pages</p>
+      <h3 class="mb-2 text-xl font-bold text-on-surface">Upload & Parsing Demos</h3>
+      <p class="text-sm leading-6 text-on-surface-variant">Use the dedicated upload interfaces to capture screenshots and demonstrate validation differences clearly.</p>
+    </div>
+    <div class="border border-outline-variant/20 bg-surface-container-low p-6">
+      <p class="mb-2 font-mono text-[10px] uppercase tracking-[0.24em] text-yellow-500">Task Ready</p>
+      <h3 class="mb-2 text-xl font-bold text-on-surface">GitHub-Friendly Layout</h3>
+      <p class="text-sm leading-6 text-on-surface-variant">Cleaner wording and consistent visual styling make the project easier to present in your internship repository.</p>
+    </div>
+  </section>
+
+  <section class="space-y-6">
+    <div class="flex items-center justify-between">
+      <h2 class="flex items-center gap-2 text-2xl font-bold uppercase tracking-tighter">
+        <span class="h-6 w-1 bg-primary-container"></span>
+        Review Modules
+      </h2>
+      <div class="flex gap-4 text-[10px] font-mono text-on-surface-variant">
+        <span class="flex items-center gap-1"><span class="h-2 w-2 bg-[#c40044]"></span> CRITICAL</span>
+        <span class="flex items-center gap-1"><span class="h-2 w-2 bg-orange-500"></span> HIGH</span>
+        <span class="flex items-center gap-1"><span class="h-2 w-2 bg-yellow-500"></span> MEDIUM</span>
+        <span class="flex items-center gap-1"><span class="h-2 w-2 bg-secondary-container"></span> INFO</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-0.5 border border-outline-variant/10 bg-outline-variant/10 md:grid-cols-3 lg:grid-cols-5">
+      <a th:href="@{/swagger-ui.html}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-secondary-container">MOD_001</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold">Swagger</h4>
+          <span class="border border-secondary-container/20 bg-secondary-container/10 px-2 py-0.5 text-[9px] text-secondary-container">INFO</span>
+        </div>
+      </a>
+
+      <a th:href="@{/codeinject}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-error">MOD_002</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold">Cmd Inject</h4>
+          <span class="border border-error/20 bg-error-container px-2 py-0.5 text-[9px] text-error">CRITICAL</span>
+        </div>
+      </a>
+
+      <a th:href="@{/jsonp/getToken}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-surface-variant">MOD_003</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold">JSONP</h4>
+          <span class="border border-yellow-500/20 bg-yellow-500/10 px-2 py-0.5 text-[9px] text-yellow-500">MEDIUM</span>
+        </div>
+      </a>
+
+      <a th:href="@{/file/pic}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-surface-variant">MOD_004</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold">Picture Upload</h4>
+          <span class="border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 text-[9px] text-orange-500">HIGH</span>
+        </div>
+      </a>
+
+      <a th:href="@{/file/any}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-error">MOD_005</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold">File Upload</h4>
+          <span class="border border-error/20 bg-error-container px-2 py-0.5 text-[9px] text-error">CRITICAL</span>
+        </div>
+      </a>
+
+      <a th:href="@{/cors/sec/originFilter}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-surface-variant">MOD_006</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold">CORS</h4>
+          <span class="border border-yellow-500/20 bg-yellow-500/10 px-2 py-0.5 text-[9px] text-yellow-500">MEDIUM</span>
+        </div>
+      </a>
+
+      <a th:href="@{/path_traversal/vul}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-error">MOD_007</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold">Path Traversal</h4>
+          <span class="border border-error/20 bg-error-container px-2 py-0.5 text-[9px] text-error">CRITICAL</span>
+        </div>
+      </a>
+
+      <a th:href="@{/sqli/mybatis/vuln01}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-error">MOD_008</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold">SQL Inject</h4>
+          <span class="border border-error/20 bg-error-container px-2 py-0.5 text-[9px] text-error">CRITICAL</span>
+        </div>
+      </a>
+
+      <a th:href="@{/ssrf/urlConnection/vuln}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-surface-variant">MOD_009</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold">SSRF</h4>
+          <span class="border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 text-[9px] text-orange-500">HIGH</span>
+        </div>
+      </a>
+
+      <a th:href="@{/rce/runtime/exec}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-error">MOD_010</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold">RCE</h4>
+          <span class="border border-error/20 bg-error-container px-2 py-0.5 text-[9px] text-error">CRITICAL</span>
+        </div>
+      </a>
+
+      <a th:href="@{/ooxml/upload}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-surface-variant">MOD_011</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold text-sm">ooxml XXE</h4>
+          <span class="border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 text-[9px] text-orange-500">HIGH</span>
+        </div>
+      </a>
+
+      <a th:href="@{/xlsx-streamer/upload}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-surface-variant">MOD_012</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold text-sm">xlsx XXE</h4>
+          <span class="border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 text-[9px] text-orange-500">HIGH</span>
+        </div>
+      </a>
+
+      <a th:href="@{/env}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-surface-variant">MOD_013</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold text-sm">Actuator Env</h4>
+          <span class="border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 text-[9px] text-orange-500">HIGH</span>
+        </div>
+      </a>
+
+      <a th:href="@{/jwt/createToken}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-surface-variant">MOD_014</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold text-sm">JWT Create</h4>
+          <span class="border border-yellow-500/20 bg-yellow-500/10 px-2 py-0.5 text-[9px] text-yellow-500">MEDIUM</span>
+        </div>
+      </a>
+
+      <a th:href="@{/jwt/getName}" class="group relative overflow-hidden bg-surface-container-low p-5 transition-all hover:bg-surface-container-highest">
+        <div class="pointer-events-none absolute inset-0 border border-primary-container/0 transition-all group-hover:border-primary-container/40"></div>
+        <span class="mb-3 block font-mono text-[10px] text-on-surface-variant">MOD_015</span>
+        <div class="mb-4 flex items-center justify-between">
+          <h4 class="text-lg font-bold text-sm">JWT Decode</h4>
+          <span class="border border-yellow-500/20 bg-yellow-500/10 px-2 py-0.5 text-[9px] text-yellow-500">MEDIUM</span>
+        </div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="fixed bottom-0 left-0 z-50 flex h-10 w-full items-center border-t border-[#00ff88]/20 bg-[#10131b]/95 px-4 backdrop-blur-md">
+  <div class="mr-6 flex items-center gap-1.5">
+    <div class="h-3 w-3 rounded-full bg-[#ff5f56]"></div>
+    <div class="h-3 w-3 rounded-full bg-[#ffbd2e]"></div>
+    <div class="h-3 w-3 rounded-full bg-[#27c93f]"></div>
+  </div>
+  <div class="flex flex-1 items-center overflow-hidden font-mono text-xs tracking-wider text-[#00ff88]">
+    <span class="mr-2 text-[#b9cbb9]">root@secureaudit $</span>
+    <span class="whitespace-nowrap">session active · secure-code-review-lab · Docker · Port 8080</span>
+    <span class="blinking-cursor"></span>
+  </div>
+  <div class="ml-4 flex items-center gap-6">
+    <div class="flex items-center gap-2 font-mono text-[10px] uppercase text-[#00ff88]">
+      <span class="material-symbols-outlined text-[14px]">terminal</span>
+      <span>Terminal</span>
+    </div>
+    <div class="font-mono text-[10px] text-[#b9cbb9]"><span id="liveUtc"></span></div>
+  </div>
+</footer>
+
+<div class="pointer-events-none fixed inset-0 z-[-1] opacity-[0.03]" style="background-image: radial-gradient(#00ff88 0.5px, transparent 0.5px); background-size: 24px 24px;"></div>
+<div class="pointer-events-none fixed inset-0 z-[-1] bg-gradient-to-b from-transparent via-[#060910] to-[#060910]"></div>
+<script>
+(function () {
+  const el = document.getElementById('liveUtc');
+  if (!el) return;
+  const now = new Date();
+  el.textContent = 'UTC: ' + now.toISOString().replace('T', ' ').replace('Z', '');
+})();
+</script>
+</body>
+</html>

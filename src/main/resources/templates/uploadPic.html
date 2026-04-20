@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Code Review Lab | Picture Upload</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" th:href="@{/css/lab-ui.css}" href="/css/lab-ui.css" />
+</head>
+<body class="lab-body">
+  <main class="lab-shell">
+    <section class="lab-card">
+      <div class="lab-header">
+        <div class="lab-badge"><span class="lab-dot"></span> Picture Upload Review</div>
+        <a th:href="@{/index}" href="/index" class="lab-back">← Back to dashboard</a>
+      </div>
+      <div class="lab-content">
+        <div class="lab-grid">
+          <div>
+            <p class="lab-eyebrow">Validation Demo</p>
+            <h1 class="lab-title">Upload images and observe the validation flow.</h1>
+            <p class="lab-text">This page tests the image-only workflow. The backend checks the file extension, MIME type, and content to decide whether the upload should be accepted.</p>
+            <ul class="lab-list">
+              <li><span></span><div>Allowed extensions include <span class="lab-code">.jpg</span>, <span class="lab-code">.png</span>, <span class="lab-code">.jpeg</span>, <span class="lab-code">.gif</span>, <span class="lab-code">.bmp</span>, and <span class="lab-code">.ico</span>.</div></li>
+              <li><span></span><div>This is useful for comparing weak and stronger file validation logic in your review report.</div></li>
+              <li><span></span><div>The server responds directly with the upload result after submission.</div></li>
+            </ul>
+          </div>
+          <aside class="lab-panel">
+            <form class="lab-form" method="POST" th:action="@{/file/upload/picture}" action="/file/upload/picture" enctype="multipart/form-data">
+              <div>
+                <label for="file">Select image</label>
+                <input id="file" type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.ico,image/*" required />
+              </div>
+              <div class="lab-actions">
+                <button class="lab-button" type="submit">Upload image</button>
+                <a class="lab-button-secondary" th:href="@{/file/any}" href="/file/any">Open unrestricted upload</a>
+              </div>
+            </form>
+          </aside>
+        </div>
+        <div class="lab-footer">
+          <div>Mode: <span class="lab-code">Extension + MIME + Content Check</span></div>
+          <div>Endpoint: <span class="lab-code">POST /file/upload/picture</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

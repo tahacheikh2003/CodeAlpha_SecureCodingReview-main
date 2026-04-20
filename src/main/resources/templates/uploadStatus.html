@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secure Code Review Lab | Upload Status</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" th:href="@{/css/lab-ui.css}" href="/css/lab-ui.css" />
+</head>
+<body class="lab-body">
+  <main class="lab-shell">
+    <section class="lab-card">
+      <div class="lab-header">
+        <div class="lab-badge"><span class="lab-dot"></span> Upload Result</div>
+        <a th:href="@{/index}" href="/index" class="lab-back">← Back to dashboard</a>
+      </div>
+      <div class="lab-content">
+        <p class="lab-eyebrow">Status Overview</p>
+        <h1 class="lab-title">Latest upload response</h1>
+        <p class="lab-text">Use this page to capture the backend message after testing the upload functionality.</p>
+        <div class="lab-message" th:if="${message}">
+          <strong>Server message:</strong>
+          <span th:text="${message}">Your upload result will appear here.</span>
+        </div>
+        <div class="lab-message" th:unless="${message}">
+          <strong>No upload message yet.</strong>
+          Submit a file first, then come back here to view the result.
+        </div>
+        <div class="lab-actions">
+          <a class="lab-button" th:href="@{/file/any}" href="/file/any">Open file upload</a>
+          <a class="lab-button-secondary" th:href="@{/file/pic}" href="/file/pic">Open image upload</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
