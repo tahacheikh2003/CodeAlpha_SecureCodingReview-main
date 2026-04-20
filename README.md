@@ -356,7 +356,7 @@ curl "http://localhost:8080/path_traversal/vul?filepath=../../../etc/passwd"
 
 **[Taha El Cheikh]**
 - CodeAlpha Cybersecurity Intern
-- GitHub: [@tahacheikh2003]((https://github.com/tahacheikh2003))
+- GitHub: [@tahacheikh2003]([https://github.com/tahacheikh2003])
 
 
 ---
